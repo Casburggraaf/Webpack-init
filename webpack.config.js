@@ -2,7 +2,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
 const path = require("path");
-const bootstrapEntryPoints = require('./webpack.bootstrap.config');
 const glob = require('glob');
 const PurifyCSSPlugin = require('purifycss-webpack');
 //const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -17,7 +16,6 @@ const cssDev = [
 		options: {
 			resources: [
 				 './src/resources.scss',
-				'./src/bootstrap/customizations.scss'
       ],
 		},
 	}];
@@ -28,8 +26,7 @@ const cssProd = ExtractTextPlugin.extract({
 		options: {
 			// Provide path to the file with resources
 			resources: [
-				'./src/resources.scss',
-				'./src/bootstrap/customizations.scss'
+				'./src/resources.scss'
 			],
 		},
 	}],
@@ -37,14 +34,11 @@ const cssProd = ExtractTextPlugin.extract({
 })
 const cssConfig = isProd ? cssProd : cssDev;
 
-const bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
-
 module.exports = {
     entry: {
 					index: './src/index.js',
-					//second : './src/second.js',
-					bootstrap: bootstrapConfig,
-    },
+					//second : './src/second.js'
+		},
     output: {
 			path: path.resolve(__dirname, "dist"),
 			filename: '[name].bundle.js'
@@ -70,9 +64,7 @@ module.exports = {
             },
             { test: /\.(woff2?)$/, use: 'url-loader?limit=10000&name=fonts/[name].[ext]' },
             { test: /\.(ttf|eot)$/, use: 'file-loader?name=fonts/[name].[ext]' },
-						{ test: /\.(mp4|ico)$/, use: 'file-loader?name=images/[name].[ext]' },
-            // Bootstrap 3
-            { test:/bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/, use: 'imports-loader?jQuery=jquery' }
+						{ test: /\.(mp4|ico)$/, use: 'file-loader?name=images/[name].[ext]' }
         ]
     },
     devServer: {
@@ -85,21 +77,17 @@ module.exports = {
 				openPage: ''
     },
     plugins: [
-			new webpack.ProvidePlugin({
-				$: 'jquery',
-				jQuery: 'jquery'
-			}),
-				new HtmlWebpackPlugin({
-						title: '',
-						hash: true,
-						chunks: ['', ''],
-						filename: 'bestellen.html',
-						template: './src/bestellen.html'
-				}),
+				// new HtmlWebpackPlugin({
+				// 		title: '',
+				// 		hash: true,
+				// 		chunks: ['', ''],
+				// 		filename: 'second.html',
+				// 		template: './src/second.html'
+				// }),
         new HtmlWebpackPlugin({
             title: 'INDEX',
             hash: true,
-						excludeChunks: ['', ""],
+						excludeChunks: ["", ""],
 						template: './src/index.html',
 						favicon: 'src/images/favicon.ico',
 						environment: {prod: process.env.NODE_ENV === 'production'}
